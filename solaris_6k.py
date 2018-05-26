@@ -3,7 +3,9 @@ Solaris6K.py: Calculate approximate positions of the major planets
 """
 
 import numpy
-import Constants
+
+import constants
+
 
 def sin_wrapper(theta):
     """
@@ -12,12 +14,14 @@ def sin_wrapper(theta):
 
     return numpy.sin(numpy.deg2rad(theta))
 
+
 def arcsin_wrapper(num):
     """
     Warpper for numpy.arcsin to return degree
     """
 
     return numpy.rad2deg(numpy.arcsin(num))
+
 
 def cos_wrapper(theta):
     """
@@ -26,6 +30,7 @@ def cos_wrapper(theta):
 
     return numpy.cos(numpy.deg2rad(theta))
 
+
 def arccos_wrapper(num):
     """
     Warpper for numpy.arccos to return degree
@@ -33,17 +38,19 @@ def arccos_wrapper(num):
 
     return numpy.rad2deg(numpy.arccos(num))
 
+
 def get_century(jd_time):
     """
     Take a JD time and return the century pased since J2000.0
     """
 
-    num_century = (jd_time - Constants.J2000_0) / Constants.CONVERSION_FACTOR
+    num_century = (jd_time - constants.J2000_0) / constants.CONVERSION_FACTOR
 
     if abs(num_century) > 30:
         raise ValueError("Date is outside of scope (3000 BCE to 3000 CE).")
     else:
         return num_century
+
 
 def get_current_value(base_value, rate, time):
     """
@@ -52,6 +59,7 @@ def get_current_value(base_value, rate, time):
 
     return base_value + rate * time
 
+
 def get_perihelion_argument(perihelion_longitude, ascending_node_longitude):
     """
     Calculate the argument of perihelion.
@@ -59,12 +67,13 @@ def get_perihelion_argument(perihelion_longitude, ascending_node_longitude):
 
     return perihelion_longitude - ascending_node_longitude
 
+
 def get_mean_anomaly(
-        mean_longitude,
-        perihelion_longitude,
-        additional_terms,
-        time
-    ):
+    mean_longitude,
+    perihelion_longitude,
+    additional_terms,
+    time
+):
     """
     Calculate the mean anomaly and normalize it within +/- 180 degree
     """
@@ -81,35 +90,41 @@ def get_mean_anomaly(
     # Normalize the mean_anomaly
     return arcsin_wrapper(sin_wrapper(mean_anomaly))
 
+
 def get_eccentric_anomaly(mean_anomaly, eccentricity, tol):
     """
     Iterate solver for eccentric anomaly
     """
 
-    term_e = eccentricity * Constants.ECCENTRICITIY_FACTOR
+    term_e = eccentricity * constants.ECCENTRICITIY_FACTOR
     eccentric_anomaly = mean_anomaly + term_e * sin_wrapper(mean_anomaly)
     eccentric_anomaly_delta = numpy.float64("inf")
 
     while any(eccentric_anomaly_delta > tol):
-        mean_anomaly_delta = mean_anomaly - (eccentric_anomaly - term_e * sin_wrapper(eccentric_anomaly))
-        eccentric_anomaly_delta = mean_anomaly_delta / (1 - eccentricity * cos_wrapper(eccentric_anomaly))
+        mean_anomaly_delta = mean_anomaly - \
+            (eccentric_anomaly - term_e * sin_wrapper(eccentric_anomaly))
+        eccentric_anomaly_delta = mean_anomaly_delta / \
+            (1 - eccentricity * cos_wrapper(eccentric_anomaly))
         eccentric_anomaly += eccentric_anomaly_delta
     return eccentric_anomaly
 
+
 def get_ecliptic_coordinate(
-        heliocentric_coordinate,
-        perihelion_argument,
-        ascending_node_longitude,
-        inclination
-    ):
+    heliocentric_coordinate,
+    perihelion_argument,
+    ascending_node_longitude,
+    inclination
+):
     """
     Convert heliocentric coordinate to J2000 ecliptic plane coordinate
     """
 
     ecliptic_x_matrix = numpy.column_stack(
         (
-            cos_wrapper(perihelion_argument) * cos_wrapper(ascending_node_longitude) - sin_wrapper(perihelion_argument) * sin_wrapper(ascending_node_longitude) * cos_wrapper(inclination),
-            - sin_wrapper(perihelion_argument) * cos_wrapper(ascending_node_longitude) - cos_wrapper(perihelion_argument) * sin_wrapper(ascending_node_longitude) * cos_wrapper(inclination),
+            cos_wrapper(perihelion_argument) * cos_wrapper(ascending_node_longitude) - sin_wrapper(
+                perihelion_argument) * sin_wrapper(ascending_node_longitude) * cos_wrapper(inclination),
+            - sin_wrapper(perihelion_argument) * cos_wrapper(ascending_node_longitude) - cos_wrapper(
+                perihelion_argument) * sin_wrapper(ascending_node_longitude) * cos_wrapper(inclination),
             numpy.array(
                 [0 for num in enumerate(perihelion_argument)],
                 numpy.dtype("float64")
@@ -119,8 +134,10 @@ def get_ecliptic_coordinate(
 
     ecliptic_y_matrix = numpy.column_stack(
         (
-            cos_wrapper(perihelion_argument) * sin_wrapper(ascending_node_longitude) + sin_wrapper(perihelion_argument) * cos_wrapper(ascending_node_longitude) * cos_wrapper(inclination),
-            - sin_wrapper(perihelion_argument) * sin_wrapper(ascending_node_longitude) + cos_wrapper(perihelion_argument) * cos_wrapper(ascending_node_longitude) * cos_wrapper(inclination),
+            cos_wrapper(perihelion_argument) * sin_wrapper(ascending_node_longitude) + sin_wrapper(
+                perihelion_argument) * cos_wrapper(ascending_node_longitude) * cos_wrapper(inclination),
+            - sin_wrapper(perihelion_argument) * sin_wrapper(ascending_node_longitude) + cos_wrapper(
+                perihelion_argument) * cos_wrapper(ascending_node_longitude) * cos_wrapper(inclination),
             numpy.array(
                 [0 for num in enumerate(perihelion_argument)],
                 numpy.dtype("float64")
@@ -147,6 +164,7 @@ def get_ecliptic_coordinate(
         )
     )
 
+
 def main():
     """
     Calculations
@@ -156,38 +174,38 @@ def main():
     century_since_epoch = get_century(time)
 
     semi_major_axes = get_current_value(
-        Constants.SEMI_MAJOR_AXES,
-        Constants.SEMI_MAJOR_AXES_RATE,
+        constants.SEMI_MAJOR_AXES,
+        constants.SEMI_MAJOR_AXES_RATE,
         century_since_epoch
     )
 
     eccentricities = get_current_value(
-        Constants.ECCENTRICITIES,
-        Constants.ECCENTRICITIES_RATE,
+        constants.ECCENTRICITIES,
+        constants.ECCENTRICITIES_RATE,
         century_since_epoch
     )
 
     inclinations = get_current_value(
-        Constants.INCLINATIONS,
-        Constants.INCLINATIONS_RATE,
+        constants.INCLINATIONS,
+        constants.INCLINATIONS_RATE,
         century_since_epoch
     )
 
     mean_longitudes = get_current_value(
-        Constants.MEAN_LONGITUDES,
-        Constants.MEAN_LONGITUDES_RATE,
+        constants.MEAN_LONGITUDES,
+        constants.MEAN_LONGITUDES_RATE,
         century_since_epoch
     )
 
     perihelion_longitudes = get_current_value(
-        Constants.PERIHELION_LONGITUDES,
-        Constants.PERIHELION_LONGITUDES_RATE,
+        constants.PERIHELION_LONGITUDES,
+        constants.PERIHELION_LONGITUDES_RATE,
         century_since_epoch
     )
 
     ascending_node_longitudes = get_current_value(
-        Constants.ASCENDING_NODE_LONGITUDES,
-        Constants.ASCENDING_NODE_LONGITUDES_RATE,
+        constants.ASCENDING_NODE_LONGITUDES,
+        constants.ASCENDING_NODE_LONGITUDES_RATE,
         century_since_epoch
     )
 
@@ -200,10 +218,10 @@ def main():
         mean_longitudes,
         perihelion_longitudes,
         (
-            Constants.TERM_B,
-            Constants.TERM_C,
-            Constants.TERM_S,
-            Constants.TERM_F
+            constants.TERM_B,
+            constants.TERM_C,
+            constants.TERM_S,
+            constants.TERM_F
         ),
         century_since_epoch
     )
@@ -212,7 +230,7 @@ def main():
         mean_anomalies,
         eccentricities,
         numpy.array(
-            [Constants.TOL for num in enumerate(mean_anomalies)],
+            [constants.TOL for num in enumerate(mean_anomalies)],
         )
     )
 
@@ -220,8 +238,10 @@ def main():
         (
             semi_major_axes * (
                 cos_wrapper(eccentric_anomalies) - eccentricities
-                ),
-            semi_major_axes * numpy.sqrt(1 - eccentricities ** 2) * sin_wrapper(eccentric_anomalies),
+            ),
+            semi_major_axes *
+            numpy.sqrt(1 - eccentricities ** 2) *
+            sin_wrapper(eccentric_anomalies),
             numpy.array(
                 [0 for num in enumerate(mean_anomalies)],
                 numpy.dtype("float64")
@@ -241,18 +261,19 @@ def main():
             [1, 0, 0],
             [
                 0,
-                cos_wrapper(Constants.OBLIQUITY),
-                - sin_wrapper(Constants.OBLIQUITY)
+                cos_wrapper(constants.OBLIQUITY),
+                - sin_wrapper(constants.OBLIQUITY)
             ],
             [
                 0,
-                sin_wrapper(Constants.OBLIQUITY),
-                cos_wrapper(Constants.OBLIQUITY)
+                sin_wrapper(constants.OBLIQUITY),
+                cos_wrapper(constants.OBLIQUITY)
             ]
         ]
     )
 
     print(numpy.dot(eq_matrix, ecliptic_coordinates.T).T)
+
 
 if __name__ == "__main__":
     main()

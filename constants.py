@@ -1,5 +1,5 @@
 """
-Constants.py: Provides constants used by Solaris6K
+constants.py: Provides constants used by Solaris6K
 """
 
 import numpy
