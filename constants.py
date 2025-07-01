@@ -2,12 +2,12 @@
 constants.py: Provides constants used by Solaris6K
 """
 
-import numpy
+import numpy as np
 
 # Semi-major axes and the coresponding rates
 # [au, au/century]
 
-SEMI_MAJOR_AXES = numpy.array(
+SEMI_MAJOR_AXES = np.array(
     [
         0.38709843,
         0.72332102,
@@ -17,11 +17,12 @@ SEMI_MAJOR_AXES = numpy.array(
         9.54149883,
         19.18797948,
         30.06952752,
-        39.48686035
-    ], numpy.dtype("float64")
+        39.48686035,
+    ],
+    np.dtype("float64"),
 )
 
-SEMI_MAJOR_AXES_RATE = numpy.array(
+SEMI_MAJOR_AXES_RATE = np.array(
     [
         0.00000000,
         -0.00000026,
@@ -31,14 +32,15 @@ SEMI_MAJOR_AXES_RATE = numpy.array(
         -0.00003065,
         -0.00020455,
         0.00006447,
-        0.00449751
-    ], numpy.dtype("float64")
+        0.00449751,
+    ],
+    np.dtype("float64"),
 )
 
 # Eccentricities and the coresponding rates
 # [, /century]
 
-ECCENTRICITIES = numpy.array(
+ECCENTRICITIES = np.array(
     [
         0.20563661,
         0.00676399,
@@ -48,11 +50,12 @@ ECCENTRICITIES = numpy.array(
         0.05550825,
         0.04685740,
         0.00895439,
-        0.24885238
-    ], numpy.dtype("float64")
+        0.24885238,
+    ],
+    np.dtype("float64"),
 )
 
-ECCENTRICITIES_RATE = numpy.array(
+ECCENTRICITIES_RATE = np.array(
     [
         0.00002123,
         -0.00005107,
@@ -62,14 +65,15 @@ ECCENTRICITIES_RATE = numpy.array(
         -0.00032044,
         -0.00001550,
         0.00000818,
-        0.00006026
-    ], numpy.dtype("float64")
+        0.00006026,
+    ],
+    np.dtype("float64"),
 )
 
 # Inclinations and the coresponding rates
 # [degrees, degrees/century]
 
-INCLINATIONS = numpy.array(
+INCLINATIONS = np.array(
     [
         7.00559432,
         3.39777545,
@@ -79,11 +83,12 @@ INCLINATIONS = numpy.array(
         2.49424102,
         0.77298127,
         1.77005520,
-        17.14104260
-    ], numpy.dtype("float64")
+        17.14104260,
+    ],
+    np.dtype("float64"),
 )
 
-INCLINATIONS_RATE = numpy.array(
+INCLINATIONS_RATE = np.array(
     [
         -0.00590158,
         0.00043494,
@@ -93,14 +98,15 @@ INCLINATIONS_RATE = numpy.array(
         0.00451969,
         -0.00180155,
         0.00022400,
-        0.00000501
-    ], numpy.dtype("float64")
+        0.00000501,
+    ],
+    np.dtype("float64"),
 )
 
 # Mean longitude and the coresponding rates
 # [degrees, degrees/century]
 
-MEAN_LONGITUDES = numpy.array(
+MEAN_LONGITUDES = np.array(
     [
         252.25166724,
         181.97970850,
@@ -110,11 +116,12 @@ MEAN_LONGITUDES = numpy.array(
         50.07571329,
         314.20276625,
         304.22289287,
-        238.96535011
-    ], numpy.dtype("float64")
+        238.96535011,
+    ],
+    np.dtype("float64"),
 )
 
-MEAN_LONGITUDES_RATE = numpy.array(
+MEAN_LONGITUDES_RATE = np.array(
     [
         149472.67486623,
         58517.81560260,
@@ -124,14 +131,15 @@ MEAN_LONGITUDES_RATE = numpy.array(
         1222.11494724,
         428.49512595,
         218.46515314,
-        145.18042903
-    ], numpy.dtype("float64")
+        145.18042903,
+    ],
+    np.dtype("float64"),
 )
 
 # Perihelion longitudes and the coresponding rates
 # [degrees, degrees/century]
 
-PERIHELION_LONGITUDES = numpy.array(
+PERIHELION_LONGITUDES = np.array(
     [
         77.45771895,
         131.76755713,
@@ -141,11 +149,12 @@ PERIHELION_LONGITUDES = numpy.array(
         92.86136063,
         172.43404441,
         46.68158724,
-        224.09702598
-    ], numpy.dtype("float64")
+        224.09702598,
+    ],
+    np.dtype("float64"),
 )
 
-PERIHELION_LONGITUDES_RATE = numpy.array(
+PERIHELION_LONGITUDES_RATE = np.array(
     [
         0.15940013,
         0.05679648,
@@ -155,14 +164,15 @@ PERIHELION_LONGITUDES_RATE = numpy.array(
         0.54179478,
         0.09266985,
         0.01009938,
-        -0.00968827
-    ], numpy.dtype("float64")
+        -0.00968827,
+    ],
+    np.dtype("float64"),
 )
 
 # Ascending node longitudes and the coresponding rates
 # [degrees, degrees/century]
 
-ASCENDING_NODE_LONGITUDES = numpy.array(
+ASCENDING_NODE_LONGITUDES = np.array(
     [
         48.33961819,
         76.67261496,
@@ -172,11 +182,12 @@ ASCENDING_NODE_LONGITUDES = numpy.array(
         113.63998702,
         73.96250215,
         131.78635853,
-        110.30167986
-    ], numpy.dtype("float64")
+        110.30167986,
+    ],
+    np.dtype("float64"),
 )
 
-ASCENDING_NODE_LONGITUDES_RATE = numpy.array(
+ASCENDING_NODE_LONGITUDES_RATE = np.array(
     [
         -0.12214182,
         -0.27274174,
@@ -186,77 +197,42 @@ ASCENDING_NODE_LONGITUDES_RATE = numpy.array(
         -0.25015002,
         0.05739699,
         -0.00606302,
-        -0.00809981
-    ], numpy.dtype("float64")
+        -0.00809981,
+    ],
+    np.dtype("float64"),
 )
 
 # Additional terms for mean anomaly calculation for Jupiter through Pluto
 
-TERM_B = numpy.array(
-    [
-        0,
-        0,
-        0,
-        0,
-        -0.00012452,
-        0.00025899,
-        0.00058331,
-        -0.00041348,
-        -0.01262724
-    ], numpy.dtype("float64")
+TERM_B = np.array(
+    [0, 0, 0, 0, -0.00012452, 0.00025899, 0.00058331, -0.00041348, -0.01262724],
+    np.dtype("float64"),
 )
 
-TERM_C = numpy.array(
-    [
-        0,
-        0,
-        0,
-        0,
-        0.06064060,
-        -0.13434469,
-        -0.97731848,
-        0.68346318,
-        0
-    ], numpy.dtype("float64")
+TERM_C = np.array(
+    [0, 0, 0, 0, 0.06064060, -0.13434469, -0.97731848, 0.68346318, 0],
+    np.dtype("float64"),
 )
 
-TERM_S = numpy.array(
-    [
-        0,
-        0,
-        0,
-        0,
-        -0.35635438,
-        0.87320147,
-        0.17689245,
-        -0.10162547,
-        0
-    ], numpy.dtype("float64")
+TERM_S = np.array(
+    [0, 0, 0, 0, -0.35635438, 0.87320147, 0.17689245, -0.10162547, 0],
+    np.dtype("float64"),
 )
 
-TERM_F = numpy.array(
-    [
-        0,
-        0,
-        0,
-        0,
-        38.35125000,
-        38.35125000,
-        7.67025000,
-        7.67025000,
-        0
-    ], numpy.dtype("float64")
+TERM_F = np.array(
+    [0, 0, 0, 0, 38.35125000, 38.35125000, 7.67025000, 7.67025000, 0],
+    np.dtype("float64"),
 )
 
 # Other constants
 
 # J2000.0 in Juilian date
-J2000_0 = numpy.float64(2451545.0)
+J2000_0 = np.float64(2451545.0)
 # Day to century
-CONVERSION_FACTOR = numpy.float64(36525)
+CONVERSION_FACTOR = np.float64(36525)
 #
-ECCENTRICITIY_FACTOR = numpy.float64(180) / numpy.pi
+ECCENTRICITIY_FACTOR = np.float64(180) / np.pi
 # Kepler's Equation error threshold
-TOL = numpy.float64("10E-8")
+TOL = np.float64("10E-8")
 # J2000 frame obliquity
-OBLIQUITY = numpy.float64(23.43928)
+OBLIQUITY = np.float64(23.43928)
