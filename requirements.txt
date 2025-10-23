@@ -1,4 +1,4 @@
-jupyterlab==4.4.9
+jupyterlab==4.4.10
 matplotlib==3.10.6
 numpy==2.3.3
 pydantic==2.12.0
