@@ -2,5 +2,5 @@ jupyterlab==4.5.2
 matplotlib==3.10.8
 numpy==2.3.4
 pydantic==2.12.5
-scipy==1.16.2
+scipy==1.17.0
 skyfield==1.53
