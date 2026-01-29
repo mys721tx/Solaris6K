@@ -3,4 +3,4 @@ matplotlib==3.10.8
 numpy==2.4.1
 pydantic==2.12.5
 scipy==1.17.0
-skyfield==1.53
+skyfield==1.54
