@@ -42,15 +42,15 @@ time_vector = start_time + TimeDelta(time_steps * u.day)
 noise_std = 2.0 / 60
 np.random.seed(42)
 
-# Keep body and x-limit together so entries can be toggled in one place.
+# Keep body, x-limit, and known orbital period (days) together so entries can be toggled in one place.
 celestial_bodies = [
-    ("sun", 0.007),
-    ("moon", 0.08),
-    ("mercury", 0.02),
-    ("venus", 0.01),
-    ("mars", 0.006),
-    ("jupiter", 0.006),
-    ("saturn", 0.004),
+    ("sun", 0.007, 365.25),  # Sidereal year
+    ("moon", 0.08, 27.322),  # Sidereal month
+    ("mercury", 0.02, 87.969),
+    ("venus", 0.01, 224.701),
+    ("mars", 0.006, 686.971),
+    ("jupiter", 0.006, 4332.589),
+    ("saturn", 0.004, 10759.22),
 ]
 
 # Dense frequency grid focused on the high-value astronomical zones
@@ -65,7 +65,7 @@ fft_output_dir = Path("fft_tables")
 plot_output_dir = Path("fft_plots")
 
 
-def process_body(body, x_limit):
+def process_body(body, x_limit, orbital_period):
     print(f"Analyzing {body.upper()}...")
 
     # Use deterministic body-specific noise so multiprocessing
@@ -201,16 +201,15 @@ def process_body(body, x_limit):
         color="gray",
         alpha=0.05,
     )
-    first_year_days = 365.25
-    first_year_mask = filtered_days < first_year_days
+    first_orbit_mask = filtered_days < orbital_period
     start_date_label = str(start_time).split()[0]
     ax1.scatter(
-        ra_detrended[first_year_mask],
-        dec_detrended[first_year_mask],
+        ra_detrended[first_orbit_mask],
+        dec_detrended[first_orbit_mask],
         s=2,
         color="crimson",
         alpha=0.5,
-        label=f"First Year from {start_date_label}",
+        label=f"First orbit from {start_date_label}",
     )
     ax1.set_title(f"2D Celestial Trajectory: {body.upper()}")
     ax1.set_xlabel("Relative Right Ascension (Degrees)")
@@ -274,9 +273,9 @@ def worker(body_queue, result_queue):
             body_queue.task_done()
             break
 
-        body, x_limit = item
+        body, x_limit, orbital_period = item
         try:
-            result = process_body(body, x_limit)
+            result = process_body(body, x_limit, orbital_period)
             result_queue.put(("ok", result))
         except Exception as exc:
             result_queue.put(("error", body, str(exc)))
