@@ -4,27 +4,38 @@ from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
-from astropy.coordinates import EarthLocation, get_body, AltAz
+from astropy.coordinates import EarthLocation, get_body, AltAz, solar_system_ephemeris
 from astropy.time import Time, TimeDelta
 import astropy.units as u
 from astropy.timeseries import LombScargle
+from astropy.utils import iers
 from scipy.signal import find_peaks
+
+# Tell astropy to silently ignore the missing historical EOP data
+iers.conf.iers_degraded_accuracy = "ignore"
 
 # ==========================================
 # 1. Setup Simulation Constants
 # ==========================================
+
+# Use the local DE440 ephemeris (covers 1550–2650 AD).
+# Switch to de421.bsp for broader historical range (−3000 to +3000 AD).
+solar_system_ephemeris.set("de440")
+
 location = EarthLocation(
     lat=0 * u.deg,
     lon=0 * u.deg,
     height=0 * u.m,
 )
+# Use scale="tt" (Terrestrial Time) for pre-1960 dates.
+# UTC is only formally defined from 1960 onward.
 start_time = Time(
-    "1976-01-01 00:00:00",
-    scale="utc",
+    "1726-01-01 00:00:00",
+    scale="tt",
 )
 
 sampling_rate = 48.0  # 48 samples per day = every half hour
-total_days = 365.25 * 50  # 30 Years
+total_days = 365.25 * 300  # 300 Years
 time_steps = np.arange(0, total_days, 1.0 / sampling_rate)
 time_vector = start_time + TimeDelta(time_steps * u.day)
 
