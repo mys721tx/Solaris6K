@@ -47,10 +47,10 @@ celestial_bodies = [
     ("sun", 0.007, 365.25),  # Sidereal year
     ("moon", 0.08, 27.322),  # Sidereal month
     ("mercury", 0.02, 87.969),
-    ("venus", 0.01, 224.701),
-    ("mars", 0.006, 686.971),
-    ("jupiter", 0.006, 4332.589),
-    ("saturn", 0.004, 10759.22),
+    ("venus", 0.005, 224.701),
+    ("mars", 0.003, 686.971),
+    ("jupiter", 0.003, 4332.589),
+    ("saturn", 0.003, 10759.22),
 ]
 
 # Dense frequency grid focused on the high-value astronomical zones
@@ -140,15 +140,26 @@ def process_body(body, x_limit, orbital_period):
 
     fft_table_path = fft_output_dir / f"{body}_fft.tsv"
 
-    # Sort rows by combined power (descending).
-    sorted_idx = np.argsort(combined_power)[::-1]
-    freq_sorted = frequencies[sorted_idx]
-    power_ra_sorted = power_ra[sorted_idx]
-    power_dec_sorted = power_dec[sorted_idx]
-    power_combined_sorted = combined_power[sorted_idx]
+    # 1. Very aggressive distance gate (e.g., just 10-20 frequency bins)
+    # This allows the algorithm to immediately drop into a valley and find a second peak.
+    safety_distance_bins = 15
 
-    period_days = 1.0 / freq_sorted
-    period_hours = period_days * 24.0
+    # 2. Advanced Peak Finding relying purely on local topographic prominence
+    peaks, _ = find_peaks(
+        combined_power,
+        prominence=0.03
+        * np.max(combined_power),  # Captures distinct features > 3% of max power
+        distance=safety_distance_bins,
+    )
+
+    # Write top 20 peaks (by combined power) to TSV.
+    top_peaks = peaks[np.argsort(combined_power[peaks])[::-1]][:20]
+    top_freqs = frequencies[top_peaks]
+    top_period_days = 1.0 / top_freqs
+    top_period_hours = top_period_days * 24.0
+    top_power_ra = power_ra[top_peaks]
+    top_power_dec = power_dec[top_peaks]
+    top_power_combined = combined_power[top_peaks]
 
     with fft_table_path.open(mode="w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f, delimiter="\t")
@@ -162,29 +173,17 @@ def process_body(body, x_limit, orbital_period):
                 "power_combined",
             ]
         )
-        for i in range(len(freq_sorted)):
+        for i in range(len(top_peaks)):
             writer.writerow(
                 [
-                    f"{freq_sorted[i]:.5f}",
-                    f"{period_days[i]:.5f}",
-                    f"{period_hours[i]:.5f}",
-                    f"{power_ra_sorted[i]:.5f}",
-                    f"{power_dec_sorted[i]:.5f}",
-                    f"{power_combined_sorted[i]:.5f}",
+                    f"{top_freqs[i]:.5f}",
+                    f"{top_period_days[i]:.5f}",
+                    f"{top_period_hours[i]:.5f}",
+                    f"{top_power_ra[i]:.5f}",
+                    f"{top_power_dec[i]:.5f}",
+                    f"{top_power_combined[i]:.5f}",
                 ]
             )
-
-    # 1. Very aggressive distance gate (e.g., just 10-20 frequency bins)
-    # This allows the algorithm to immediately drop into a valley and find a second peak.
-    safety_distance_bins = 15
-
-    # 2. Advanced Peak Finding relying purely on local topographic prominence
-    peaks, _ = find_peaks(
-        combined_power,
-        prominence=0.03
-        * np.max(combined_power),  # Captures distinct features > 3% of max power
-        distance=safety_distance_bins,
-    )
 
     visible_peaks = peaks[(frequencies[peaks] >= 0.0) & (frequencies[peaks] <= x_limit)]
     if len(visible_peaks) > 0:
