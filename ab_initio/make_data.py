@@ -43,7 +43,7 @@ start_time = Time(
     scale="tt",
 )
 
-sampling_rate = 48.0  # 48 samples per day = every half hour
+sampling_rate = 48.0  # 48 samples per day = every 30 minutes
 time_steps = np.arange(0, TOTAL_DAYS, 1.0 / sampling_rate)
 time_vector = start_time + TimeDelta(time_steps * u.day)
 
@@ -138,7 +138,7 @@ def worker(body_queue, result_queue):
             body_queue.task_done()
             break
 
-        body, x_limit, orbital_period = item
+        body, x_limit, orbital_period, _ = item
         try:
             result = process_body(body, x_limit, orbital_period)
             result_queue.put(("ok", result))
