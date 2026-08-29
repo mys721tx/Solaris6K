@@ -7,5 +7,5 @@ pandas-stubs==3.0.0.260204
 pydantic==2.13.4
 scipy==1.17.1
 scipy-stubs==1.17.1.5
-skyfield==1.54
+skyfield==1.55
 tables==3.11.1
